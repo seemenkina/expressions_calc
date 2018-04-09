@@ -8,15 +8,51 @@
 
 #include "composite expression.h"
 
+typedef std::map<Token, int> DictionaryMap;
+typedef std::queue<composite_expression> CEqueue;
+typedef std::string String;
+
+
+int queue_calculate(DictionaryMap& dictionary, CEqueue& RPN, int m_buf){
+    int a;
+    int exit_queue = m_buf;
+    while (!RPN.empty()) {
+        auto elem = RPN.front();
+        if (exit_queue == 0) return m_buf;
+        a = elem.calculate_rpn_expression(dictionary);
+        if (a == -1) {
+            RPN.push(elem);
+            RPN.pop();
+            exit_queue --;
+            break;
+        }
+        else{
+            String buf = elem.get_first_token().get_name();
+            dictionary[buf] = a;
+            RPN.pop();
+            m_buf --;
+            exit_queue --;
+        }
+    }
+    return m_buf;
+}
+
 int main(int argc, char* argv[]){
 
     std::ifstream input_file;
     std::ofstream output_file;
 
-    std::string name_input_file = "input.txt";
-    std::string name_output_file = "output.txt";
+    String name_input_file;
+    String name_output_file;
 
-
+    if( argc == 3 ) {
+        name_input_file = argv[1];
+        name_output_file = argv[2];
+    }
+    else {
+        std::cout << "Usage: ./cppfile InputFile OutputFile\n";
+        std::exit(1);
+    }
     input_file.open(name_input_file);
 
     if (!input_file.good()){
@@ -26,51 +62,57 @@ int main(int argc, char* argv[]){
 
     output_file.open(name_output_file);
 
-    if (!output_file.good()){
-        std:: cout << "Exception opening file: " << name_output_file << '\n';
-        std::exit(1);
-    }
 
     int N;
     int M;
 
     input_file >> N >> M;
 
-    std::map<Token, int> dictionary;
+    DictionaryMap dictionary;
     int value;
-    std::string buf;
+    String buf;
 
     for (int i = 0; i < N; i++){
-
         input_file >> buf >> value;
         auto check_pair = dictionary.insert(std::pair<Token,int>(Token(buf), value));
         if (!(check_pair.second)) {
-            std::cout << "not ok";
+            std::cout << "Exception insert pair to dictionary. \n "
+                         <<  "Input data do not meet the specification \n";
         }
-        output_file << check_pair.first->first << " " << check_pair.first->second <<'\n';
     }
 
+    String exp;
     std::vector<composite_expression> expressions;
-    std::string exp;
     std::getline(input_file, exp); // добиваю последнюю строку из предыдущего цикла
 
     while(!input_file.eof()) {
         std::getline(input_file, exp);
         exp.erase(exp.find_last_not_of(" \n\r\t")+1);
         expressions.push_back(composite_expression(exp));
+
+        auto init_pair = expressions.back().get_first_token();
+        auto check_pair = dictionary.insert(std::pair<Token,int>(init_pair, -1));
+        if (!(check_pair.second)) {
+            std::cout << "Exception insert pair to dictionary\n";
+        }
     }
 
-    std::queue<composite_expression> RPN;
+    CEqueue RPN;
     for (auto i: expressions){
-        output_file << i << '\n';
         RPN.push(composite_expression(i.get_reverse_polish_notation()));
     }
 
+    int M_buf = M;
+    int M_buf_last = -1;
+    while(!RPN.empty()){
+        M_buf = queue_calculate(dictionary, RPN, M_buf);
+        if (M_buf == M_buf_last) break;
+        M_buf_last = M_buf;
+    }
 
-    std::queue<composite_expression> b = RPN;
-    while(!b.empty()) {
-        output_file << b.front() << " " <<b.size() << '\n';
-        b.pop();
+
+    for(auto i : dictionary) {
+        output_file << i.first << " " << i.second << '\n';
     }
 
 

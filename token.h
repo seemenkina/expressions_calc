@@ -41,8 +41,12 @@ public:
         stack_priority = other.stack_priority;
     }
 
-    int get_stack_priority(){
+    int get_stack_priority() const{
         return stack_priority;
+    }
+
+    std::string get_name() const{
+        return name;
     }
 
     bool operator < (const Token& other) const {
