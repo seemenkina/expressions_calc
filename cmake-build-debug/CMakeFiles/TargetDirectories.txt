@@ -1,3 +1,0 @@
-/root/code/skb_project/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/root/code/skb_project/cmake-build-debug/CMakeFiles/skb_project.dir
-/root/code/skb_project/cmake-build-debug/CMakeFiles/edit_cache.dir

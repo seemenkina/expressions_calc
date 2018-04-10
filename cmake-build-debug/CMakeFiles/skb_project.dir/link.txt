@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/skb_project.dir/main.cpp.o CMakeFiles/skb_project.dir/composite_expression.cpp.o  -o skb_project 
