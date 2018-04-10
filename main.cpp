@@ -62,7 +62,6 @@ int main(int argc, char* argv[]){
 
     output_file.open(name_output_file);
 
-
     int N;
     int M;
 
@@ -77,10 +76,13 @@ int main(int argc, char* argv[]){
         auto check_pair = dictionary.insert(std::pair<Token,int>(Token(buf), value));
         if (!(check_pair.second)) {
             std::cout << "Exception insert pair to dictionary. \n "
-                         <<  "Input data do not meet the specification \n";
+                         <<  "Input data do not satisfy the specification. \n";
+            std::exit(1);
         }
     }
 
+    DictionaryMap buf_dictionary = dictionary; //словарь только простых высказываний,
+                                                    // понадобится для вывода
     String exp;
     std::vector<composite_expression> expressions;
     std::getline(input_file, exp); // добиваю последнюю строку из предыдущего цикла
@@ -93,7 +95,9 @@ int main(int argc, char* argv[]){
         auto init_pair = expressions.back().get_first_token();
         auto check_pair = dictionary.insert(std::pair<Token,int>(init_pair, -1));
         if (!(check_pair.second)) {
-            std::cout << "Exception insert pair to dictionary\n";
+            std::cout << "Exception insert pair to dictionary. \n "
+                      <<  "Input data do not satisfy the specification. \n";
+            std::exit(1);
         }
     }
 
@@ -110,11 +114,15 @@ int main(int argc, char* argv[]){
         M_buf_last = M_buf;
     }
 
-
     for(auto i : dictionary) {
-        output_file << i.first << " " << i.second << '\n';
+        DictionaryMap:: iterator it = buf_dictionary.find(i.first);
+        if( it == buf_dictionary.end()) {
+            if (i.second == -1)
+                output_file << '?' << '\n';
+            else
+                output_file << i.second << '\n';
+        }
     }
-
 
     return 0;
 }

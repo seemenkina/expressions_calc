@@ -3,4 +3,4 @@ project(skb_project)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(skb_project main.cpp "composite expression.cpp" "composite expression.h" token.h)
+add_executable(skb_project main.cpp "composite expression.cpp" "composite expression.h" token.h token.cpp)

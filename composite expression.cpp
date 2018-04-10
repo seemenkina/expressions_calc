@@ -6,8 +6,11 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
+
 #include "composite expression.h"
 
+
+/***/
 template<typename Out>
 void split(const std::string &s, char delim, Out result) {
     std::stringstream ss(s);
@@ -22,6 +25,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
     split(s, delim, std::back_inserter(elems));
     return elems;
 }
+/***/
 
 composite_expression:: composite_expression(const std::string str){
     auto tokens = split(str, ' ');
@@ -30,7 +34,7 @@ composite_expression:: composite_expression(const std::string str){
     }
 }
 
-Token composite_expression:: get_first_token(){
+Token composite_expression:: get_first_token() const {
     return expression.front();
 }
 
@@ -77,7 +81,6 @@ composite_expression composite_expression::get_reverse_polish_notation() {
     }
     return rpn;
 }
-
 
 int calc_operation(int op1, int op2, const Token& elem){
     if (elem.get_stack_priority() == 1){
