@@ -1,4 +1,3 @@
-#include <string.h>
 #include <iostream>
 
 #include "token.h"
@@ -8,39 +7,42 @@
  *      | - 2
  *      & - 3
  *      operand - -1
- *      unknown - 0
  */
-Token:: Token(std::string s) {
+Token::Token(std::string s) {
     name = s;
     char c = s[0];
     switch (c) {
         case '=': {
             stack_priority = 1;
+            token_type = kTokenAssign;
             break;
         }
         case '|': {
             stack_priority = 2;
+            token_type = kTokenOr;
             break;
         }
         case '&': {
             stack_priority = 3;
+            token_type = kTokenAnd;
             break;
         }
-        default:
+        default: {
             stack_priority = -1;
+            token_type = kTokenConst;
+        }
     }
 }
 
-Token:: Token(const Token &other) {
-    name = other.name;
-    stack_priority = other.stack_priority;
+TokenType Token::type() const {
+    return token_type;
 }
 
-int Token:: get_stack_priority() const {
+int Token::priority() const {
     return stack_priority;
 }
 
-std::string Token:: get_name() const {
+std::string Token::get_name() const {
     return name;
 }
 
