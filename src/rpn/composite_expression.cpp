@@ -9,7 +9,7 @@
 
 #include "composite_expression.h"
 
-
+//Реализация split взята со stackoverflow
 /***/
 template<typename Out>
 void split(const std::string &s, char delim, Out result) {
